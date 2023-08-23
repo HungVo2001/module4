@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout.html :: header}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div class="container-fluid card">
+  <h3>Management Job</h3>
+  <a class="btn btn-primary">Create</a>
+    <p>
+        <a th:href="@{/task/create}">
+            Add new task job
+        </a>
+    </p>
+    <table id= "task">
+        <tr>
+            <th>
+                No.
+            </th>
+            <th>
+                Title.
+            </th>
+            <th>
+                Description.
+            </th>
+            <th>
+                Start.
+            </th>
+            <th>
+                End.
+            </th>
+            <th>
+                Status.
+            </th>
+            <th>
+                Type.
+            </th>
+            <th>
+                Action.
+            </th>
+        </tr>
+        <tr th:each="task, iter : ${tasks}">
+            <td th:text="${iter.index + 1}">
+
+            </td>
+            <td th:text="${task.title}">
+                Title.
+            </td>
+            <td th:text="${task.description}">
+                Description.
+            </td>
+            <td th:text="${task.start}">
+                Start.
+            </td >
+            <td th:text="${task.end}">
+                End.
+            </td>
+            <td th:text="${task.status}">
+                Status.
+            </td >
+            <td th:text="${task.type}">
+                Type.
+            </td>
+            <td>
+                <a class="btn btn-primary" th:href="@{/task/edit/{id}(id=${task.getId()})}">Edit</a>
+                <a class="btn btn-danger" th:href="@{/task/delete/{id}(id=${task.getId()})}">Delete</a>
+            </td>
+        </tr>
+    </table>
+</div>
+<th:block th:insert="~{layout.html :: myScript}"></th:block>
+</body>
+</html>
