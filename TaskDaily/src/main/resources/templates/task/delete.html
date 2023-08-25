@@ -6,44 +6,49 @@
     <title>Title</title>
   </head>
 <body>
-<h3>Remove Task</h3>
-<p>
-  <a th:href="@{/task}">
-    Back to task list
-  </a>
-</p>
-<form th:object="${task}" th:action="@{/task/delete}" method="POST">
-  <input type="hidden" th:field="*{id}"/>
-  <div class="mb-3">
-    <label for="title" class="form-label">Title</label>
-    <input type="text" class="form-control" id="title" name="title" th:field="*{title}" required>
+<div id="show-body">
+  <div id="form">
+    <h3>Remove Task</h3>
+    <p>
+      <a th:href="@{/task}">
+        Back to task list
+      </a>
+    </p>
+    <form th:object="${task}" th:action="@{/task/delete}" method="POST">
+      <input type="hidden" th:field="*{id}"/>
+      <div class="mb-3">
+        <label for="title" class="form-label">Title</label>
+        <input type="text" class="form-control" id="title" name="title" th:field="*{title}" required>
+      </div>
+      <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea class="form-control" id="description" name="description" th:field="*{description}" rows="3"></textarea>
+      </div>
+      <div class="mb-3">
+        <label for="start" class="form-label">Start</label>
+        <input type="datetime-local" class="form-control" id="start" name="start" th:field="*{start}">
+      </div>
+      <div class="mb-3">
+        <label for="end" class="form-label">End</label>
+        <input type="datetime-local" class="form-control" id="end" name="end" th:field="*{end}">
+      </div>
+      <div class="mb-3">
+        <label for="status" class="form-label">Status</label>
+        <select class="form-control" id="status" th:field="*{status}">
+          <option th:each="task : ${taskStatuses}" th:value="${task}" th:text="${task}"></option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="type" class="form-label">Type</label>
+        <select class="form-control" id="type" name="type" th:field="*{type}">
+          <option th:each="type : ${taskTypes}" th:value="${type}" th:text="${type}"></option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary">Delete Task</button>
+      <th:block th:insert="~{layout.html :: myScript}"></th:block>
+    </form>
   </div>
-  <div class="mb-3">
-    <label for="description" class="form-label">Description</label>
-    <textarea class="form-control" id="description" name="description" th:field="*{description}" rows="3"></textarea>
-  </div>
-  <div class="mb-3">
-    <label for="start" class="form-label">Start</label>
-    <input type="datetime-local" class="form-control" id="start" name="start" th:field="*{start}">
-  </div>
-  <div class="mb-3">
-    <label for="end" class="form-label">End</label>
-    <input type="datetime-local" class="form-control" id="end" name="end" th:field="*{end}">
-  </div>
-  <div class="mb-3">
-    <label for="status" class="form-label">Status</label>
-    <select class="form-control" id="status" th:field="*{status}">
-      <option th:each="task : ${taskStatuses}" th:value="${task}" th:text="${task}"></option>
-    </select>
-  </div>
-  <div class="mb-3">
-    <label for="type" class="form-label">Type</label>
-    <select class="form-control" id="type" name="type" th:field="*{type}">
-      <option th:each="type : ${taskTypes}" th:value="${type}" th:text="${type}"></option>
-    </select>
-  </div>
-  <button type="submit" class="btn btn-primary">Delete Task</button>
-  <th:block th:insert="~{layout.html :: myScript}"></th:block>
-</form>
+</div>
+
 </body>
 </html>

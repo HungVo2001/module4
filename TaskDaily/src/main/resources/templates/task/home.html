@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout.html :: header}">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+    </head>
+<body>
+<div class="container-fluid card">
+    <div id="show-body">
+        <div id="form">
+            <h1>Task Home</h1>
+            <p>
+                <a th:href="@{/task}">
+                    Back to task list
+                </a>
+            </p>
+            <table id="task">
+                <tr>
+                    <th>Title</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Update Status</th>
+                </tr>
+                <th:block th:each="task : ${tasks}">
+                    <tr>
+                        <td th:text="${task.title}">
+                            Title.
+                        </td>
+                        <td th:text="${task.type}">
+                            Type.
+                        </td>
+                        <td>
+                            <span th:text="${task.status}"></span>
+                        </td>
+                        <td>
+                            <form th:object="${task}" th:action="@{/task/update-status/{id}(id=${task.getId()})}"
+                                  method="post">
+                                <div class="mb-3">
+                                    <!--            <label for="status" class="form-label">Status</label>-->
+                                    <!--            <select class="form-control" id="status" th:field="*{status}">-->
+                                    <!--              <option th:each="task : ${taskStatuses}" th:value="${task}" th:text="${task}"></option>-->
+                                    <!--            </select>-->
+                                    <select name="status">
+                                        <option th:each="status : ${taskStatuses}"
+                                                th:value="${status}" th:text="${status}"></option>
+                                    </select>
+                                </div>
+                                <button type="submit">Update</button>
+                            </form>
+                        </td>
+                    </tr>
+                </th:block>
+            </table>
+        </div>
+    </div>
+</div>
+<th:block th:insert="~{layout.html :: myScript}"></th:block>
+</body>
+</html>

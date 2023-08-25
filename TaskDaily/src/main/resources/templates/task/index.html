@@ -7,11 +7,16 @@
 </head>
 <body>
 <div class="container-fluid card">
-  <h3>Management Job</h3>
+  <h3>Management Task</h3>
   <a class="btn btn-primary">Create</a>
     <p>
         <a th:href="@{/task/create}">
             Add new task job
+        </a>
+    </p>
+    <p>
+        <a th:href="@{/task/home}">
+            Go to Task Home
         </a>
     </p>
     <table id= "task">
@@ -23,14 +28,14 @@
                 Title.
             </th>
             <th>
-                Description.
+                Time
             </th>
-            <th>
-                Start.
-            </th>
-            <th>
-                End.
-            </th>
+<!--            <th>-->
+<!--                Start.-->
+<!--            </th>-->
+<!--            <th>-->
+<!--                End.-->
+<!--            </th>-->
             <th>
                 Status.
             </th>
@@ -45,18 +50,15 @@
             <td th:text="${iter.index + 1}">
 
             </td>
-            <td th:text="${task.title}">
+            <td th:text="${task.title}" th:title="${task.description}">
                 Title.
             </td>
-            <td th:text="${task.description}">
-                Description.
-            </td>
-            <td th:text="${task.start}">
+            <td th:text="${task.time}">
                 Start.
             </td >
-            <td th:text="${task.end}">
-                End.
-            </td>
+<!--            <td th:text="${task.end}">-->
+<!--                End.-->
+<!--            </td>-->
             <td th:text="${task.status}">
                 Status.
             </td >
@@ -66,6 +68,8 @@
             <td>
                 <a class="btn btn-primary" th:href="@{/task/edit/{id}(id=${task.getId()})}">Edit</a>
                 <a class="btn btn-danger" th:href="@{/task/delete/{id}(id=${task.getId()})}">Delete</a>
+<!--                <a class="btn"><i class="fa-regular fa-pen-to-square text-success"></i></a>-->
+<!--                <a class="btn"><i class="fa-regular fa-trash-can text-danger"></i></a>-->
             </td>
         </tr>
     </table>
