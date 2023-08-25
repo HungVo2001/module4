@@ -11,9 +11,14 @@ import java.util.List;
 @Repository
 public interface TaskHistoryRepository extends JpaRepository<TaskHistory, Long> {
 
+    //    @Query(value = "SELECT t  FROM TaskHistory t WHERE  " +
+//            "(DATE_FORMAT(t.start, '%Y-%m-%d') <= DATE_FORMAT(CURRENT_DATE, '%Y-%m-%d') AND " +
+//            "DATE_FORMAT(t.end, '%Y-%m-%d') >= DATE_FORMAT(CURRENT_DATE, '%Y-%m-%d') AND t.type = 'NONE_DAILY')" +
+//            "OR (DATE_FORMAT(t.start, '%Y-%m-%d') = DATE_FORMAT(CURRENT_DATE, '%Y-%m-%d') AND t.type = 'DAILY')" )
+//    List<TaskHistory> findDemo();
     @Query(value = "SELECT t  FROM TaskHistory t WHERE  " +
             "(DATE_FORMAT(t.start, '%Y-%m-%d') <= DATE_FORMAT(CURRENT_DATE, '%Y-%m-%d') AND " +
-            "DATE_FORMAT(t.end, '%Y-%m-%d') >= DATE_FORMAT(CURRENT_DATE, '%Y-%m-%d') AND t.type = 'NONE_DAILY')" +
-            "OR (DATE_FORMAT(t.start, '%Y-%m-%d') = DATE_FORMAT(CURRENT_DATE, '%Y-%m-%d') AND t.type = 'DAILY')" )
-    List<TaskHistory> findDemo();
+            "DATE_FORMAT(t.end, '%Y-%m-%d') >= DATE_FORMAT(CURRENT_DATE, '%Y-%m-%d'))" +
+            "ORDER BY t.start")
+    List<TaskHistory> findAllTaskToDay();
 }

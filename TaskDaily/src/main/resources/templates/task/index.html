@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{layout.html :: header}">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+    </head>
 <body>
 <div class="container-fluid card">
-  <h3>Management Task</h3>
-  <a class="btn btn-primary">Create</a>
+    <h3>Management Task</h3>
+    <a class="btn btn-primary">Create</a>
     <p>
         <a th:href="@{/task/create}">
             Add new task job
@@ -30,12 +30,12 @@
             <th>
                 Time
             </th>
-<!--            <th>-->
-<!--                Start.-->
-<!--            </th>-->
-<!--            <th>-->
-<!--                End.-->
-<!--            </th>-->
+            <!--            <th>-->
+            <!--                Start.-->
+            <!--            </th>-->
+            <!--            <th>-->
+            <!--                End.-->
+            <!--            </th>-->
             <th>
                 Status.
             </th>
@@ -54,26 +54,45 @@
                 Title.
             </td>
             <td th:text="${task.time}">
-                Start.
+                Time
             </td >
-<!--            <td th:text="${task.end}">-->
-<!--                End.-->
+            <!--            <td th:text="${task.end}">-->
+            <!--                End.-->
+            <!--            </td>-->
+            <td>
+                <label>
+                    <select th:class="${'form-control ' + task.status}"
+                            th:id="${task.id}"
+                            onchange="onChangeSelect(this) ">
+
+                        <option th:each="item : ${statuses}"
+                                th:value="${item}"
+                                th:selected="${task.status == item}"
+                                th:text="${item.name}"></option>
+
+                    </select>
+                </label>
 <!--            </td>-->
-            <td th:text="${task.status}">
-                Status.
-            </td >
+<!--&lt;!&ndash;            <td th:text="${task.status}">&ndash;&gt;-->
+<!--&lt;!&ndash;                Status.&ndash;&gt;-->
+<!--            </td >-->
             <td th:text="${task.type}">
                 Type.
             </td>
             <td>
                 <a class="btn btn-primary" th:href="@{/task/edit/{id}(id=${task.getId()})}">Edit</a>
                 <a class="btn btn-danger" th:href="@{/task/delete/{id}(id=${task.getId()})}">Delete</a>
-<!--                <a class="btn"><i class="fa-regular fa-pen-to-square text-success"></i></a>-->
-<!--                <a class="btn"><i class="fa-regular fa-trash-can text-danger"></i></a>-->
+                <!--                <a class="btn"><i class="fa-regular fa-pen-to-square text-success"></i></a>-->
+                <!--                <a class="btn"><i class="fa-regular fa-trash-can text-danger"></i></a>-->
             </td>
         </tr>
     </table>
 </div>
 <th:block th:insert="~{layout.html :: myScript}"></th:block>
+<script>
+    function onChangeSelect(e){
+        window.location.href = '/task/'+e.id+'/'+ e.value;
+    }
+</script>
 </body>
 </html>

@@ -31,6 +31,7 @@ public class TaskHistory {
     private TaskType type;
 
     @ManyToOne
+    @JoinColumn(name = "task_id")
     private Task task;
 
     @PrePersist

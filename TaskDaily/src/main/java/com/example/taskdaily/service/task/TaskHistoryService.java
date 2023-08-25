@@ -1,4 +1,5 @@
-package com.example.taskdaily.service;
+package com.example.taskdaily.service.task;
+
 
 import com.example.taskdaily.model.TaskHistory;
 import com.example.taskdaily.repository.TaskHistoryRepository;
