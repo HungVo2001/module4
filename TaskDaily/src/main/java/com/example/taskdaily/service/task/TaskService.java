@@ -9,6 +9,7 @@ import com.example.taskdaily.repository.TaskHistoryRepository;
 import com.example.taskdaily.repository.TaskRepository;
 //import com.example.taskdaily.service.task.request.TaskEditRequest;
 //import com.example.taskdaily.service.TaskHistoryService;
+import com.example.taskdaily.service.task.request.TaskEditRequest;
 import com.example.taskdaily.service.task.request.TaskSaveRequest;
 import com.example.taskdaily.service.task.response.TaskListResponse;
 import com.example.taskdaily.until.AppMessage;
@@ -53,7 +54,7 @@ public class TaskService {
 //        tasks.add(task2);
 //
 //    }
-public List<TaskListResponse> getTasks() {
+public List<TaskListResponse> getTaskHistory(){
 
     return taskHistoryRepository.findAllTaskToDay()
             .stream()
@@ -80,6 +81,7 @@ public List<TaskListResponse> getTasks() {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         String.format(AppMessage.ID_NOT_FOUND, "Task", id)));
     }
+
     public void changeStatus(Long id, TaskStatus status){
         var task = findById(id);
         task.setStatus(status);
@@ -87,30 +89,36 @@ public List<TaskListResponse> getTasks() {
     }
 
 
-//    private TaskEditRequest taskToTaskEditRequest(Task task){
-//        var result = new TaskEditRequest();
-//        result.setTitle(String.valueOf(task.getTitle()));
-//        result.setDescription(String.valueOf(task.getDescription()));
-//        result.setStart(String.valueOf(task.getStart()));
-//        result.setEnd(String.valueOf(task.getEnd()));
-//        result.setType(String.valueOf(task.getType()));
-//        return result;
-//    }
-//    public TaskEditRequest showEditById(Long id){
-//        Task task = findById(id);
-//        return taskToTaskEditRequest(task);
-//    }
-//    public void edit(TaskEditRequest request, Long id) throws Exception{
-//        var taskInDb = findById(id);
-//
-//        taskInDb.setStart(LocalTime.parse(request.getStart()));
-//        taskInDb.setEnd(LocalTime.parse(request.getEnd()));
-//        taskInDb.setType(TaskType.valueOf(request.getTitle()));
-//        taskInDb.setTitle(request.getTitle());
-//        taskInDb.setDescription(request.getDescription());
-//        request.setId(id.toString());
-//        taskRepository.save(taskInDb);
-//    }
+    private TaskEditRequest taskToTaskEditRequest(TaskHistory taskHistory){
+        var result = new TaskEditRequest();
+        result.setTitle(String.valueOf(taskHistory.getTitle()));
+        result.setDescription(String.valueOf(taskHistory.getDescription()));
+        result.setStart(String.valueOf(taskHistory.getStart()));
+        result.setEnd(String.valueOf(taskHistory.getEnd()));
+        result.setType(String.valueOf(taskHistory.getType()));
+        result.setId(String.valueOf(taskHistory.getId()));
+        return result;
+    }
+    public TaskEditRequest showEditById(Long id){
+        TaskHistory taskHistory = findById(id);
+        return taskToTaskEditRequest(taskHistory);
+    }
+    public void edit(TaskEditRequest request, Long id) throws Exception{
+        var taskInDb = findById(id);
+
+        taskInDb.setStart(AppUtil.mapper.map(request.getStart(), LocalDateTime.class));
+        taskInDb.setEnd(AppUtil.mapper.map(request.getEnd(), LocalDateTime.class));
+        taskInDb.setType(TaskType.valueOf(request.getType()));
+        taskInDb.setTitle(request.getTitle());
+        taskInDb.setDescription(request.getDescription());
+        request.setId(id.toString());
+        taskHistoryRepository.save(taskInDb);
+    }
+    public void deleteById(Long id){
+        TaskHistory taskHistory = findById(id);
+        taskHistoryRepository.delete(taskHistory);
+    }
+
 
 
 //    public List<Task> getTasks() {
@@ -151,23 +159,24 @@ public List<TaskListResponse> getTasks() {
 //    public void deleteTask(Long taskId) {
 //        tasks.removeIf(task -> task.getId().equals(taskId));
 //    }
-    public void updateTaskStatus(Long id, TaskStatus status) {
-        TaskHistory taskHistory = taskHistoryService.getTaskHistoryById(id);
-        if (taskHistory != null) {
-            taskHistory.setStatus(status);
-            taskHistoryService.save(taskHistory);
+//    public void updateTaskStatus(Long id, TaskStatus status) {
+//        TaskHistory taskHistory = taskHistoryService.getTaskHistoryById(id);
+//        if (taskHistory != null) {
+//            taskHistory.setStatus(status);
+//            taskHistoryService.save(taskHistory);
+//
+//        }
+//    }
+//    public void createTaskHistory(Task task, TaskStatus oldStatus, TaskStatus newStatus) {
+//        TaskHistory taskHistory = new TaskHistory();
+//        taskHistory.setTask(task);
+//        taskHistory.setStatus(oldStatus);
+//        taskHistory.setStatus(newStatus);
+//        taskHistory.setType(TaskType.DAILY);
+//        // Thực hiện lưu bản ghi TaskHistory vào cơ sở dữ liệu
+//        taskHistoryService.save(taskHistory);
+//    }
 
-        }
-    }
-    public void createTaskHistory(Task task, TaskStatus oldStatus, TaskStatus newStatus) {
-        TaskHistory taskHistory = new TaskHistory();
-        taskHistory.setTask(task);
-        taskHistory.setStatus(oldStatus);
-        taskHistory.setStatus(newStatus);
-        taskHistory.setType(TaskType.DAILY);
-        // Thực hiện lưu bản ghi TaskHistory vào cơ sở dữ liệu
-        taskHistoryService.save(taskHistory);
-    }
 //    public void updateTaskStatus(Long id, TaskStatus status) {
 //        Task taskToUpdate = getTaskById(id);
 //        if (taskToUpdate != null) {

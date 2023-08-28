@@ -15,7 +15,7 @@
       </a>
     </p>
     <form th:object="${task}" th:action="@{/task/edit/{id}(id=${task.id})}" method="POST">
-<!--      <input type="hidden" th:field="*{id}"/>-->
+      <input type="hidden" th:field="*{id}"/>
       <div class="mb-3">
         <label for="title" class="form-label">Title</label>
         <input type="text" class="form-control" id="title" name="title" th:field="*{title}" required>

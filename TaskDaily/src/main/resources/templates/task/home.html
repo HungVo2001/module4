@@ -1,60 +1,55 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{layout.html :: header}">
-    <head>
-        <meta charset="UTF-8">
-        <title>Title</title>
-    </head>
+    <meta charset="UTF-8">
+    <title>Daily Task</title>
+    <!-- Thêm liên kết Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.5.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
 <body>
+
 <div class="container-fluid card">
-    <div id="show-body">
-        <div id="form">
-            <h1>Task Home</h1>
-            <p>
-                <a th:href="@{/task}">
-                    Back to task list
-                </a>
-            </p>
-            <table id="task">
-                <tr>
-                    <th>Title</th>
-                    <th>Type</th>
-                    <th>Status</th>
-                    <th>Update Status</th>
-                </tr>
-                <th:block th:each="task : ${tasks}">
-                    <tr>
-                        <td th:text="${task.title}">
-                            Title.
-                        </td>
-                        <td th:text="${task.type}">
-                            Type.
-                        </td>
-                        <td>
-                            <span th:text="${task.status}"></span>
-                        </td>
-                        <td>
-                            <form th:object="${task}" th:action="@{/task/update-status/{id}(id=${task.getId()})}"
-                                  method="post">
-                                <div class="mb-3">
-                                    <!--            <label for="status" class="form-label">Status</label>-->
-                                    <!--            <select class="form-control" id="status" th:field="*{status}">-->
-                                    <!--              <option th:each="task : ${taskStatuses}" th:value="${task}" th:text="${task}"></option>-->
-                                    <!--            </select>-->
-                                    <select name="status">
-                                        <option th:each="status : ${taskStatuses}"
-                                                th:value="${status}" th:text="${status}"></option>
-                                    </select>
-                                </div>
-                                <button type="submit">Update</button>
-                            </form>
-                        </td>
-                    </tr>
-                </th:block>
-            </table>
-        </div>
+    <h3>Management Daily Task</h3>
+    <div class="mb-3">
+        <a class="btn btn-primary btn-sm" href="/task/create">Create</a>
+        <p>
+            <a th:href="@{/task}">
+                Go to Task History Management
+            </a>
+        </p>
     </div>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">No.</th>
+            <th scope="col">Title</th>
+            <!--            <th scope="col">Description</th>-->
+            <th scope="col">Time</th>
+            <!--            <th scope="col">Status</th>-->
+            <th scope="col">Type</th>
+            <th scope="col">Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="task, iter : ${tasks}">
+            <td th:text="${iter.index + 1}"></td>
+            <td th:text="${task.title}" th:title="${task.description}"></td>
+            <td th:text="${task.time}"></td>
+            <!--            <td th:text="${task.status}"></td>-->
+            <td th:text="${task.type}"></td>
+            <td>
+                <a class="btn btn-primary btn-sm" th:href="@{/task/edit(id=${task.getId()})}">Edit</a>
+                <a class="btn btn-danger btn-sm" th:href="@{/task/delete(id=${task.getId()})}">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 </div>
+
+<!-- Thêm liên kết Bootstrap JS và Popper.js -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.5.0/dist/js/bootstrap.bundle.min.js"></script>
+
 <th:block th:insert="~{layout.html :: myScript}"></th:block>
+
 </body>
 </html>
