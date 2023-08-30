@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>Title</title>
   <!-- Thêm liên kết Bootstrap CSS -->
-<!--  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.5.0/dist/css/bootstrap.min.css" rel="stylesheet">-->
+  <!--  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.5.0/dist/css/bootstrap.min.css" rel="stylesheet">-->
 </head>
 <body>
 <div class="container mt-5">
@@ -14,7 +14,8 @@
       Back to Task List
     </a>
   </p>
-  <form th:object="${task}" th:action="@{/history/edit/{id}(id=${task.id})}" method="POST">
+<!--  <form th:object="${task}" th:action="@{/task/editTask/{id}(id=${task.id})}" method="POST">-->
+  <form th:object="${task}" th:action="@{/task/editTask/{id}(id=${task.id})}" method="POST">
     <input type="hidden" th:field="*{id}">
     <div class="mb-3">
       <label for="title" class="form-label">Title</label>
@@ -26,18 +27,18 @@
     </div>
     <div class="mb-3">
       <label for="start" class="form-label">Start</label>
-      <input type="datetime-local" class="form-control" id="start" name="start" th:field="*{start}">
+      <input type="time" class="form-control" id="start" name="start" th:field="*{start}">
     </div>
     <div class="mb-3">
       <label for="end" class="form-label">End</label>
-      <input type="datetime-local" class="form-control" id="end" name="end" th:field="*{end}">
+      <input type="time" class="form-control" id="end" name="end" th:field="*{end}">
     </div>
-<!--    <div class="mb-3">-->
-<!--      <label for="status" class="form-label">Status</label>-->
-<!--      <select class="form-select" id="status" th:field="*{status}">-->
-<!--        <option th:each="task : ${taskStatuses}" th:value="${task}" th:text="${task}"></option>-->
-<!--      </select>-->
-<!--    </div>-->
+    <!--    <div class="mb-3">-->
+    <!--      <label for="status" class="form-label">Status</label>-->
+    <!--      <select class="form-select" id="status" th:field="*{status}">-->
+    <!--        <option th:each="task : ${taskStatuses}" th:value="${task}" th:text="${task}"></option>-->
+    <!--      </select>-->
+    <!--    </div>-->
     <div class="mb-3">
       <label for="type" class="form-label">Type</label>
       <select class="form-select" id="type" name="type" th:field="*{type}">

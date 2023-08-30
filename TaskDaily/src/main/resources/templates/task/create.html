@@ -1,66 +1,72 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{layout.html :: header}">
-    <head>
-        <meta charset="UTF-8">
-        <title>Title</title>
-    </head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- Thêm liên kết Bootstrap CSS -->
+<!--    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.5.0/dist/css/bootstrap.min.css" rel="stylesheet">-->
+</head>
 <body>
-<div id="show-body">
-    <div id="form">
-        <h3>Add Task</h3>
-        <p>
-            <a th:href="@{/task}">
-                Back to task list
-            </a>
-        </p>
-        <form th:object="${task}" action="/task/create" method="post">
-            <div class="mb-3">
+<div class="container mt-5">
+    <form th:object="${task}" action="/task/create" method="post">
+        <div class="row mb-3">
+            <h3>Add Task</h3>
+                    <p>
+                        <a class="btn btn-primary btn-sm" th:href="@{/task}">
+                            Back to task list
+                        </a>
+                    </p>
+            <div class="col-md-6">
                 <label for="title" class="form-label">Title</label>
                 <input type="text" class="form-control" id="title" name="title" th:field="*{title}" required>
             </div>
-            <div class="mb-3">
+            <div class="col-md-6">
                 <label for="description" class="form-label">Description</label>
                 <textarea class="form-control" id="description" name="description" th:field="*{description}" rows="3"></textarea>
             </div>
-            <div id="date_time">
-                <!--      <div id="none-daily">-->
-                <!--        <div class="mb-3">-->
-                <!--          <label for="start" class="form-label">Start</label>-->
-                <!--          <input type="datetime-local" class="form-control" id="start" name="start" th:field="*{start}">-->
-                <!--        </div>-->
-                <!--        <div class="mb-3">-->
-                <!--          <label for="end" class="form-label">End</label>-->
-                <!--          <input type="datetime-local" class="form-control" id="end" name="end" th:field="*{end}">-->
-                <!--        </div>-->
-                <!--      </div>-->
-                <div id="daily">
-                    <div class="mb-3">
-                        <label for="start" class="form-label">Start</label>
-                        <input type="time" class="form-control" id="start" name="start" th:field="*{start}">
-                    </div>
-                    <div class="mb-3">
-                        <label for="end" class="form-label">End</label>
-                        <input type="time" class="form-control" id="end" name="end" th:field="*{end}">
-                    </div>
+        </div>
+        <div id="date_time">
+            <!--      <div id="none-daily">-->
+            <!--        <div class="mb-3">-->
+            <!--          <label for="start" class="form-label">Start</label>-->
+            <!--          <input type="datetime-local" class="form-control" id="start" name="start" th:field="*{start}">-->
+            <!--        </div>-->
+            <!--        <div class="mb-3">-->
+            <!--          <label for="end" class="form-label">End</label>-->
+            <!--          <input type="datetime-local" class="form-control" id="end" name="end" th:field="*{end}">-->
+            <!--        </div>-->
+            <!--      </div>-->
+            <div id="daily">
+                <div class="mb-3">
+                    <label for="start" class="form-label">Start</label>
+                    <input type="time" class="form-control" id="start" name="start" th:field="*{start}">
+                </div>
+                <div class="mb-3">
+                    <label for="end" class="form-label">End</label>
+                    <input type="time" class="form-control" id="end" name="end" th:field="*{end}">
                 </div>
             </div>
+        </div>
 
-            <div class="mb-3">
+        <div class="row mb-3">
+<!--            <div class="col-md-6">-->
+<!--                <label for="status" class="form-label">Status</label>-->
+<!--                <select class="form-select" id="status" th:field="*{status}">-->
+<!--                    <option th:each="task : ${taskStatuses}" th:value="${task}" th:text="${task}"></option>-->
+<!--                </select>-->
+<!--            </div>-->
+            <div class="col-md-6">
                 <label for="type" class="form-label">Type</label>
-                <select onchange="onChange(this)" class="form-control" id="type" name="type" th:field="*{type}">
+                <select onchange="onChange(this)" class="form-control" id="type" name="type">
                     <option th:each="type : ${taskTypes}" th:value="${type}" th:text="${type}"></option>
                 </select>
             </div>
-            <button type="submit" class="btn btn-primary">Create Task</button>
-        </form>
-    </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Create Task</button>
+    </form>
 </div>
+<!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.5.0/dist/js/bootstrap.bundle.min.js"></script>-->
 <th:block th:insert="~{layout.html :: myScript}"></th:block>
-<!--lấy data từ controller bằng JS-->
-<!--<script th:inline="javascript">-->
-<!--    var demo = [[${taskStatuses}]]-->
-<!--</script>-->
 
 <script th:inline="javascript">
     const start = document.getElementById('start');
@@ -75,5 +81,6 @@
         }
     }
 </script>
+
 </body>
 </html>

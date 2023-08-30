@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout.html :: header}">
+  <meta charset="UTF-8">
+  <title>Daily History</title>
+  <!-- Thêm liên kết Bootstrap CSS -->
+<!--  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.5.0/dist/css/bootstrap.min.css" rel="stylesheet">-->
+
+</head>
+<body>
+
+<div class="container-fluid card">
+  <h3>Daily Tasks History</h3>
+  <div class="mb-3">
+    <a class="btn btn-primary btn-sm" href="/task">Go Back To Task Daily</a>
+  </div>
+  <form th:action="@{/history/search}" method="get">
+    <div class="mb-3">
+      <label for="startDate">Start Date</label>
+      <input type="date" class="form-control" id="startDate" name="startDate">
+    </div>
+    <div class="mb-3">
+      <label for="endDate">End Date</label>
+      <input type="date" class="form-control" id="endDate" name="endDate">
+    </div>
+    <button type="submit" class="btn btn-primary btn-sm">Check Daily to Days</button>
+  </form>
+  <table class="table">
+    <thead>
+    <tr>
+      <th>
+        No.
+      </th>
+      <th>
+        Title.
+      </th>
+      <th>
+        Time
+      </th>
+      <!--            <th>-->
+      <!--                Start.-->
+      <!--            </th>-->
+      <!--            <th>-->
+      <!--                End.-->
+      <!--            </th>-->
+      <th>
+        Status.
+      </th>
+      <th>
+        Type.
+      </th>
+      <th>
+        Action.
+      </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="task, iter : ${historytasks}">
+      <td th:text="${task.id}">
+
+      </td>
+      <td th:text="${task.title}" th:title="${task.description}"></td>
+      <td th:text="${task.time}">
+        Time
+      </td>
+      <td>
+        <label>
+          <select th:class="${'form-control ' + task.status}"
+                  th:id="${task.id}"
+                  onchange="onChangeSelect(this) ">
+
+            <option th:each="item : ${statuses}"
+                    th:value="${item}"
+                    th:selected="${task.status == item}"
+                    th:text="${item.name}"></option>
+
+          </select>
+        </label>
+      </td>
+      <td th:text="${task.type}">
+        Type
+      </td>
+      <td>
+        <a class="btn btn-primary btn-sm" th:href="@{/history/edit(id=${task.getId()})}">Edit</a>
+        <a onclick="return confirm('Are you sure you want to delete this task?')"
+        class="btn btn-danger btn-sm" th:href="@{/history/delete(id=${task.getId()})}">Delete</a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Thêm liên kết Bootstrap JS và Popper.js -->
+<!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.5.0/dist/js/bootstrap.bundle.min.js"></script>-->
+
+<th:block th:insert="~{layout.html :: myScript}"></th:block>
+
+<script>
+  function onChangeSelect(e){
+    window.location.href = '/history/'+e.id+'/'+ e.value;
+  }
+</script>
+</body>
+</html>
