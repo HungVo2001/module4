@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout.html :: header}">
+    <meta charset="UTF-8">
+    <title>Task Management</title>
+</head>
+<style>
+    #pieChart {
+        width: 150px !important;
+        height: 150px !important;
+    }
+</style>
+<body>
+<div class="container card" style="height: 100vh">
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <h3 class="mt-3 border-bottom pb-2">Biểu đồ</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <form th:action="@{/view/thongke-day}" method="get" class="search-form">
+                <label for="inputDate">Choose a date:</label>
+                <input type="date" id="inputDate" name="inputDate" required th:value="${inputDate}" />
+                <button type="submit" class="btn btn-primary mt-2" style="width: 100%;">Thống kê theo ngày</button>
+            </form>
+            <canvas id="pieChartDay"></canvas>
+            <div th:if="${not #maps.isEmpty(statusTotalsDay)}">
+                <ul>
+                    <li style="list-style: none"><h5>Thông tin trạng thái</h5></li>
+                    <li th:each="entry : ${statusTotalsDay}">
+                        <span th:text="${entry.key}"></span>: <span th:text="${entry.value}"></span>
+                    </li>
+                </ul>
+            </div>
+            <div th:unless="${not #maps.isEmpty(statusTotalsDay)}">
+                <h3>No information.</h3>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <form th:action="@{/view/thongke-week}" method="get" class="search-form">
+                <label for="inputWeek">Choose a week:</label>
+                <input type="week" id="inputWeek" name="inputWeek" required th:value="${inputWeek}" />
+                <button type="submit" class="btn btn-primary mt-2" style="width: 100%;">Thống kê theo tuần</button>
+            </form>
+            <canvas id="pieChartWeek"></canvas>
+            <div th:if="${not #maps.isEmpty(statusTotalsWeek)}">
+                <ul>
+                    <li style="list-style: none"><h5>Thông tin trạng thái</h5></li>
+                    <li th:each="entry : ${statusTotalsWeek}">
+                        <span th:text="${entry.key}"></span>: <span th:text="${entry.value}"></span>
+                    </li>
+                </ul>
+            </div>
+            <div th:unless="${not #maps.isEmpty(statusTotalsWeek)}">
+                <h3>No information.</h3>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <form th:action="@{/view/thongke-month}" method="get" class="search-form">
+                <label for="inputMonth">Choose a month:</label>
+                <input type="month" id="inputMonth" name="inputMonth" required th:value="${inputMonth}" />
+                <button type="submit" class="btn btn-primary mt-2" style="width: 100%;">Thống kê theo tháng</button>
+            </form>
+            <canvas id="pieChartMonth"></canvas>
+            <div th:if="${not #maps.isEmpty(statusTotalsMonth)}">
+                <ul>
+                    <li style="list-style: none"><h5>Thông tin trạng thái</h5></li>
+                    <li th:each="entry : ${statusTotalsMonth}">
+                        <span th:text="${entry.key}"></span>: <span th:text="${entry.value}"></span>
+                    </li>
+                </ul>
+            </div>
+            <div th:unless="${not #maps.isEmpty(statusTotalsMonth)}">
+                <h3>No information.</h3>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script th:inline="javascript">
+    var pieChartDay = document.getElementById('pieChartDay').getContext('2d');
+    var pieChartWeek = document.getElementById('pieChartWeek').getContext('2d');
+    var pieChartMonth = document.getElementById('pieChartMonth').getContext('2d');
+    var statusTotalsDay = /*[[${statusTotalsDay}]]*/ {};
+    var statusTotalsWeek = /*[[${statusTotalsWeek}]]*/ {};
+    var statusTotalsMonth = /*[[${statusTotalsMonth}]]*/ {};
+    createPieChart(pieChartDay, statusTotalsDay);
+    createPieChart(pieChartWeek, statusTotalsWeek);
+    createPieChart(pieChartMonth, statusTotalsMonth);
+    function createPieChart(ctx, statusTotals) {
+        var labels = Object.keys(statusTotals);
+        var data = Object.values(statusTotals);
+        var pieChartData = {
+            labels: labels,
+            datasets: [{
+                data: data,
+                backgroundColor: [
+                    'rgba(220, 20, 60, 0.2)',
+                    'rgba(0, 128, 0, 0.2)',
+                    'rgba(255, 255, 0, 0.2)',
+                    'rgba(148, 0, 211, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(220, 20, 60, 1)',
+                    'rgba(0, 128, 0, 1)',
+                    'rgba(255, 255, 0, 1)',
+                    'rgba(148, 0, 211, 1)'
+                ],
+                borderWidth: 1
+            }]
+        };
+        new Chart(ctx, {
+            type: 'pie',
+            data: pieChartData
+        });
+    }
+</script>
+<th:block th:insert="~{layout.html :: myScript}"></th:block>
+<script>
+    function onChangeSelect(e) {
+        window.location.href = '/task/' + e.id + '/' + e.value;
+    }
+</script>
+</body>
+</html>

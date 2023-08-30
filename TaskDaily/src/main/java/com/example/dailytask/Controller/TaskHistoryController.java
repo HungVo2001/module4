@@ -1,6 +1,7 @@
 package com.example.dailytask.Controller;
 import com.example.dailytask.Domain.Enumration.TaskStatus;
 import com.example.dailytask.Domain.Enumration.TaskType;
+import com.example.dailytask.Domain.TaskHistory;
 import com.example.dailytask.Service.Task.Request.TaskEditRequest;
 import com.example.dailytask.Service.Task.Request.TaskSaveRequest;
 import com.example.dailytask.Service.Task.Response.TaskListResponse;
@@ -11,9 +12,16 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.ui.Model;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.Period;
+import java.time.YearMonth;
+import java.time.temporal.IsoFields;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping(value = "/history")
@@ -105,5 +113,182 @@ public class TaskHistoryController {
         view.addObject("taskTypes", TaskType.values());
         return new ModelAndView("redirect:/history");
     }
+
+//    @GetMapping("/task-history/day")
+//    public String viewTaskHistoryByDay(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date, Model model) {
+//        List<TaskHistory> taskHistories = taskHistoryService.getTaskHistoriesByDay(date);
+//        model.addAttribute("taskHistories", taskHistories);
+//        return "task-history";
+//    }
+//
+//    @GetMapping("/task-history/week")
+//    public String viewTaskHistoryByWeek(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date, Model model) {
+//        List<TaskHistory> taskHistories = taskHistoryService.getTaskHistoriesByWeek(date);
+//        model.addAttribute("taskHistories", taskHistories);
+//        return "task-history";
+//    }
+//
+//    @GetMapping("/task-history/month")
+//    public String viewTaskHistoryByMonth(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date, Model model) {
+//        List<TaskHistory> taskHistories = taskHistoryService.getTaskHistoriesByMonth(date);
+//        model.addAttribute("taskHistories", taskHistories);
+//        return "task-history";
+//    }
+
+    @GetMapping("/date")
+    public ModelAndView showListDate(@RequestParam(name = "localDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate localDate) {
+        ModelAndView view = new ModelAndView("/history/list");
+        view.addObject("view", taskHistoryService.getListDate(localDate));
+        return view;
+    }
+    @GetMapping("/thongke")
+    public ModelAndView show(
+            @RequestParam(value = "inputDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inputDate,
+            @RequestParam(value = "inputWeek", required = false) String inputWeek,
+            @RequestParam(value = "inputMonth", required = false) @DateTimeFormat(pattern = "yyyy-MM") YearMonth inputMonth) {
+        ModelAndView view = new ModelAndView("/history/thongke");
+        if (inputDate == null && inputWeek == null && inputMonth == null) {
+            LocalDate currentDate = LocalDate.now();
+            inputDate = currentDate;
+            inputWeek = currentDate.getYear() + "-W" + currentDate.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR);
+            inputMonth = YearMonth.from(currentDate);
+        }
+        List<Object[]> statusCountsDay = taskHistoryService.getStatusCounts(inputDate);
+        Map<String, Long> statusTotalsDay = taskHistoryService.calculateStatusTotals(statusCountsDay);
+        view.addObject("statusTotalsDay", statusTotalsDay);
+        view.addObject("inputDate", inputDate);
+        String[] parts = inputWeek.split("-W");
+        int year = Integer.parseInt(parts[0]);
+        int weekNumber = Integer.parseInt(parts[1]);
+        LocalDate startOfWeek = LocalDate.ofYearDay(year, 1)
+                .with(TemporalAdjusters.firstDayOfYear())
+                .plus(Period.ofWeeks(weekNumber))
+                .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        LocalDate endOfWeek = startOfWeek.plusDays(6);
+        List<Object[]> statusCountsWeek = taskHistoryService.getStatusCountsByWeek(startOfWeek, endOfWeek);
+        Map<String, Long> statusTotalsWeek = taskHistoryService.calculateStatusTotals(statusCountsWeek);
+        view.addObject("statusTotalsWeek", statusTotalsWeek);
+        view.addObject("inputWeek", inputWeek);
+        LocalDate startOfMonth = inputMonth.atDay(1);
+        LocalDate endOfMonth = inputMonth.atEndOfMonth();
+        List<Object[]> statusCountsMonth = taskHistoryService.getStatusCountsByWeek(startOfMonth, endOfMonth);
+        Map<String, Long> statusTotalsMonth = taskHistoryService.calculateStatusTotals(statusCountsMonth);
+        view.addObject("statusTotalsMonth", statusTotalsMonth);
+        view.addObject("inputMonth", inputMonth);
+        return view;
+    }
+
+    @GetMapping("/thongke-day")
+    public ModelAndView showStatusTotals(@RequestParam("inputDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inputDate,
+                                         @RequestParam(value = "inputWeek", required = false) String inputWeek,
+                                         @RequestParam(value = "inputMonth", required = false) @DateTimeFormat(pattern = "yyyy-MM") YearMonth inputMonth) {
+        ModelAndView view = new ModelAndView("/history/thongke");
+        if (inputWeek == null && inputMonth == null) {
+            LocalDate currentDate = LocalDate.now();
+//            inputDate = currentDate;
+            inputWeek = currentDate.getYear() + "-W" + currentDate.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR);
+            inputMonth = YearMonth.from(currentDate);
+        }
+        List<Object[]> statusCounts = taskHistoryService.getStatusCounts(inputDate);
+        Map<String, Long> statusTotals = taskHistoryService.calculateStatusTotals(statusCounts);
+        view.addObject("statusTotalsDay", statusTotals);
+        view.addObject("inputDate", inputDate);
+        String[] parts = inputWeek.split("-W");
+        int year = Integer.parseInt(parts[0]);
+        int weekNumber = Integer.parseInt(parts[1]);
+        LocalDate startOfWeek = LocalDate.ofYearDay(year, 1)
+                .with(TemporalAdjusters.firstDayOfYear())
+                .plus(Period.ofWeeks(weekNumber))
+                .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        LocalDate endOfWeek = startOfWeek.plusDays(6);
+        List<Object[]> statusCountsWeek = taskHistoryService.getStatusCountsByWeek(startOfWeek, endOfWeek);
+        Map<String, Long> statusTotalsWeek = taskHistoryService.calculateStatusTotals(statusCountsWeek);
+        view.addObject("statusTotalsWeek", statusTotalsWeek);
+        view.addObject("inputWeek", inputWeek);
+        LocalDate startOfMonth = inputMonth.atDay(1);
+        LocalDate endOfMonth = inputMonth.atEndOfMonth();
+        List<Object[]> statusCountsMonth = taskHistoryService.getStatusCountsByWeek(startOfMonth, endOfMonth);
+        Map<String, Long> statusTotalsMonth = taskHistoryService.calculateStatusTotals(statusCountsMonth);
+        view.addObject("statusTotalsMonth", statusTotalsMonth);
+        view.addObject("inputMonth", inputMonth);
+        return view;
+    }
+    @GetMapping("/thongke-week")
+    public ModelAndView showStatusTotalsByWeek(
+            @RequestParam(value = "inputWeek", required = false) String inputWeek,
+            @RequestParam(value = "inputDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inputDate,
+            @RequestParam(value = "inputMonth", required = false) @DateTimeFormat(pattern = "yyyy-MM") YearMonth inputMonth) {
+        ModelAndView view = new ModelAndView("/history/thongke");
+        if (inputDate == null &&  inputMonth == null) {
+            LocalDate currentDate = LocalDate.now();
+            inputDate = currentDate;
+            inputMonth = YearMonth.from(currentDate);
+        }
+        String[] parts = inputWeek.split("-W");
+        int year = Integer.parseInt(parts[0]);
+        int weekNumber = Integer.parseInt(parts[1]);
+        LocalDate startOfWeek = LocalDate.ofYearDay(year, 1)
+                .with(TemporalAdjusters.firstDayOfYear())
+                .plus(Period.ofWeeks(weekNumber))
+                .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        LocalDate endOfWeek = startOfWeek.plusDays(6);
+        List<Object[]> statusCounts = taskHistoryService.getStatusCountsByWeek(startOfWeek, endOfWeek);
+        Map<String, Long> statusTotals = taskHistoryService.calculateStatusTotals(statusCounts);
+        view.addObject("statusTotalsWeek", statusTotals);
+        view.addObject("inputWeek", inputWeek);
+        List<Object[]> statusCountsDay = taskHistoryService.getStatusCounts(inputDate);
+        Map<String, Long> statusTotalsDay = taskHistoryService.calculateStatusTotals(statusCountsDay);
+        view.addObject("statusTotalsDay", statusTotalsDay);
+        view.addObject("inputDate", inputDate);
+        List<Object[]> statusCountsWeek = taskHistoryService.getStatusCountsByWeek(startOfWeek, endOfWeek);
+        Map<String, Long> statusTotalsWeek = taskHistoryService.calculateStatusTotals(statusCountsWeek);
+        view.addObject("statusTotalsWeek", statusTotalsWeek);
+        view.addObject("inputWeek", inputWeek);
+        LocalDate startOfMonth = inputMonth.atDay(1);
+        LocalDate endOfMonth = inputMonth.atEndOfMonth();
+        List<Object[]> statusCountsMonth = taskHistoryService.getStatusCountsByWeek(startOfMonth, endOfMonth);
+        Map<String, Long> statusTotalsMonth = taskHistoryService.calculateStatusTotals(statusCountsMonth);
+        view.addObject("statusTotalsMonth", statusTotalsMonth);
+        view.addObject("inputMonth", inputMonth);
+        return view;
+    }
+
+    @GetMapping("/thongke-month")
+    public ModelAndView showStatusTotalsByMonth(
+            @RequestParam("inputMonth") @DateTimeFormat(pattern = "yyyy-MM") YearMonth inputMonth,
+            @RequestParam(value = "inputWeek", required = false) String inputWeek,
+            @RequestParam(value = "inputDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inputDate
+    ) {
+        ModelAndView view = new ModelAndView("history/thongke");
+        if (inputDate == null && inputWeek == null ) {
+            LocalDate currentDate = LocalDate.now();
+            inputDate = currentDate;
+            inputWeek = currentDate.getYear() + "-W" + currentDate.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR);
+        }
+        LocalDate startOfMonth = inputMonth.atDay(1);
+        LocalDate endOfMonth = inputMonth.atEndOfMonth();
+        List<Object[]> statusCountsMonth = taskHistoryService.getStatusCountsByWeek(startOfMonth, endOfMonth);
+        Map<String, Long> statusTotalsMonth = taskHistoryService.calculateStatusTotals(statusCountsMonth);
+        view.addObject("statusTotalsMonth", statusTotalsMonth);
+        view.addObject("inputMonth", inputMonth);
+        List<Object[]> statusCounts = taskHistoryService.getStatusCounts(inputDate);
+        Map<String, Long> statusTotals = taskHistoryService.calculateStatusTotals(statusCounts);
+        view.addObject("statusTotalsDay", statusTotals);
+        view.addObject("inputDate", inputDate);
+        String[] parts = inputWeek.split("-W");
+        int year = Integer.parseInt(parts[0]);
+        int weekNumber = Integer.parseInt(parts[1]);
+        LocalDate startOfWeek = LocalDate.ofYearDay(year, 1)
+                .with(TemporalAdjusters.firstDayOfYear())
+                .plus(Period.ofWeeks(weekNumber))
+                .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        LocalDate endOfWeek = startOfWeek.plusDays(6);
+        List<Object[]> statusCountsWeek = taskHistoryService.getStatusCountsByWeek(startOfWeek, endOfWeek);
+        Map<String, Long> statusTotalsWeek = taskHistoryService.calculateStatusTotals(statusCountsWeek);
+        view.addObject("statusTotalsWeek", statusTotalsWeek);
+        view.addObject("inputWeek", inputWeek);
+        return view;
+    }
+
 
 }

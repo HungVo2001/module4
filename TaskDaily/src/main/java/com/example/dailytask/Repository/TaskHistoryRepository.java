@@ -25,4 +25,12 @@ public interface TaskHistoryRepository extends JpaRepository<TaskHistory, Long> 
 
     @Query("SELECT e.created FROM TaskHistory e ORDER BY e.created DESC limit 1")
     List<LocalDate> findCreatedTask(PageRequest pageRequest);
+
+    @Query("SELECT t.status, COUNT(t.status) as status_count FROM TaskHistory t WHERE FUNCTION('DATE_FORMAT', t.start, '%Y-%m-%d') = FUNCTION('DATE_FORMAT', :startDate, '%Y-%m-%d') GROUP BY t.status")
+    List<Object[]> getStatusCountsByStartDate(@Param("startDate") LocalDate startDate);
+    @Query("SELECT t.status, COUNT(t.status) as status_count FROM TaskHistory t WHERE FUNCTION('DATE_FORMAT', t.start, '%Y-%m-%d') >= FUNCTION('DATE_FORMAT', :startDate, '%Y-%m-%d') AND FUNCTION('DATE_FORMAT', t.end, '%Y-%m-%d') <= FUNCTION('DATE_FORMAT', :endDate, '%Y-%m-%d') GROUP BY t.status")
+    List<Object[]> getStatusCountsByWeek(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+    @Query("SELECT t FROM TaskHistory t WHERE FUNCTION('DATE_FORMAT', t.start, '%Y-%m-%d') = FUNCTION('DATE_FORMAT', :localDate, '%Y-%m-%d')")
+    List<TaskHistory> findByStartDateToday(@Param("localDate") LocalDate localDate);
 }

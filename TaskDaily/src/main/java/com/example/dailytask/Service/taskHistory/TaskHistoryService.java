@@ -13,8 +13,13 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.TemporalAdjusters;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -87,6 +92,29 @@ public class TaskHistoryService {
                 .map(e -> AppUtil.mapper.map(e, TaskListResponse.class))
                 .collect(Collectors.toList());
 
+    }
+
+
+    public List<Object[]> getStatusCounts(LocalDate localDate) {
+        return taskHistoryRepository.getStatusCountsByStartDate(localDate);
+    }
+    public Map<String, Long> calculateStatusTotals(List<Object[]> statusCounts) {
+        Map<String, Long> statusTotals = new HashMap<>();
+        for (Object[] statusCount : statusCounts) {
+            TaskStatus status = (TaskStatus) statusCount[0]; // Sử dụng kiểu ETaskStatus thay vì String
+            Long count = (Long) statusCount[1];
+
+            String statusString = status.toString(); // Chuyển đổi ETaskStatus thành String
+            statusTotals.put(statusString, statusTotals.getOrDefault(statusString, 0L) + count);
+        }
+        return statusTotals;
+    }
+    public List<Object[]> getStatusCountsByWeek(LocalDate startDate, LocalDate endDate) {
+        return taskHistoryRepository.getStatusCountsByWeek(startDate, endDate);
+    }
+
+    public List<TaskHistory> getListDate(LocalDate localDate){
+        return taskHistoryRepository.findByStartDateToday(localDate);
     }
 
 

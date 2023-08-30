@@ -14,6 +14,33 @@
   <div class="mb-3">
     <a class="btn btn-primary btn-sm" href="/task">Go Back To Task Daily</a>
   </div>
+  <div class="col-md-3">
+    <form th:action="@{/view/date}" method="get" class="search-form">
+      <label for="searchDate">Select a date:</label>
+      <input type="date" id="searchDate" name="localDate" required>
+      <button type="submit" class="btn btn-primary mt-2" style="width: 100%;">Search</button>
+    </form>
+  </div>
+  <div class="col-md-3">
+    <form th:action="@{/view/thongke}" method="get" class="search-form">
+      <label for="inputDate">Choose a date:</label>
+      <input type="date" id="inputDate" name="inputDate" required>
+      <button type="submit" class="btn btn-primary mt-2" style="width: 100%;">Thống kê theo ngày</button>
+    </form>
+  </div>
+  <div class="col-md-3">
+    <form th:action="@{/view/thongke-week}" method="get" class="search-form">
+      <label for="inputWeek">Choose a week:</label>
+      <input type="week" id="inputWeek" name="inputWeek" required>
+      <button type="submit" class="btn btn-primary mt-2" style="width: 100%;">Thống kê theo tuần</button>
+    </form>
+  </div><div class="col-md-3">
+  <form th:action="@{/view/thongke-month}" method="get" class="search-form">
+    <label for="inputMonth">Choose a month:</label>
+    <input type="month" id="inputMonth" name="inputMonth" required>
+    <button type="submit" class="btn btn-primary mt-2" style="width: 100%;">Thống kê theo tháng</button>
+  </form>
+</div>
   <form th:action="@{/history/search}" method="get">
     <div class="mb-3">
       <label for="startDate">Start Date</label>
