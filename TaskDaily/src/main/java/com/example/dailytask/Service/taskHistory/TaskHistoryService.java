@@ -10,13 +10,11 @@ import com.example.dailytask.Service.Task.Response.TaskListResponse;
 import com.example.dailytask.Util.AppMessage;
 import com.example.dailytask.Util.AppUtil;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.awt.print.Pageable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.temporal.TemporalAdjusters;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,9 +43,7 @@ public class TaskHistoryService {
     public TaskHistory getTaskHistoryById(Long id) {
         return taskHistoryRepository.findById(id).orElse(null);
     }
-    public void save(TaskHistory taskHistory) {
-        taskHistoryRepository.save(taskHistory);
-    }
+
 
     public void deleteByID(Long id){
         TaskHistory taskHistory = getTaskHistoryById(id);
@@ -98,16 +94,29 @@ public class TaskHistoryService {
     public List<Object[]> getStatusCounts(LocalDate localDate) {
         return taskHistoryRepository.getStatusCountsByStartDate(localDate);
     }
+//    public Map<String, Long> calculateStatusTotals(List<Object[]> statusCounts) {
+//        Map<String, Long> statusTotals = new HashMap<>();
+//        for (Object[] statusCount : statusCounts) {
+//            TaskStatus status = (TaskStatus) statusCount[0]; // Sử dụng kiểu ETaskStatus thay vì String
+//            Long count = (Long) statusCount[1];
+//
+//            String statusString = status.toString(); // Chuyển đổi ETaskStatus thành String
+//            statusTotals.put(statusString, statusTotals.getOrDefault(statusString, 0L) + count);
+//        }
+//        return statusTotals;
+//    }
     public Map<String, Long> calculateStatusTotals(List<Object[]> statusCounts) {
-        Map<String, Long> statusTotals = new HashMap<>();
-        for (Object[] statusCount : statusCounts) {
-            TaskStatus status = (TaskStatus) statusCount[0]; // Sử dụng kiểu ETaskStatus thay vì String
+    Map<String, Long> statusTotals = new HashMap<>();
+    for (Object[] statusCount : statusCounts) {
+        if (statusCount[0] != null) {
+            TaskStatus status = (TaskStatus) statusCount[0];
             Long count = (Long) statusCount[1];
 
-            String statusString = status.toString(); // Chuyển đổi ETaskStatus thành String
+            String statusString = status.toString();
             statusTotals.put(statusString, statusTotals.getOrDefault(statusString, 0L) + count);
         }
-        return statusTotals;
+    }
+    return statusTotals;
     }
     public List<Object[]> getStatusCountsByWeek(LocalDate startDate, LocalDate endDate) {
         return taskHistoryRepository.getStatusCountsByWeek(startDate, endDate);
@@ -115,6 +124,10 @@ public class TaskHistoryService {
 
     public List<TaskHistory> getListDate(LocalDate localDate){
         return taskHistoryRepository.findByStartDateToday(localDate);
+    }
+
+    public List<TaskHistory> getListView(Pageable pageable){
+        return taskHistoryRepository.findAll();
     }
 
 

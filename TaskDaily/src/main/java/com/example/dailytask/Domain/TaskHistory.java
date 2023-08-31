@@ -47,13 +47,14 @@ public class TaskHistory {
     @JoinColumn(name = "task_id")
     private Task task;
 
-//    @PrePersist
-//    public void setupBeforeInsert(){
-//        status = TaskStatus.TODO;
-//    }
     @PrePersist
-    public void setupBeforeInsert() {
+    public void setupBeforeInsert(){
+        status = TaskStatus.TODO;
         created = LocalDate.now();
     }
+//    @PrePersist
+//    public void setupBeforeInsert() {
+//        created = LocalDate.now();
+//    }
 
 }

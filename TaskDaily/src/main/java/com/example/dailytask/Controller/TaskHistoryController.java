@@ -51,14 +51,6 @@ public class TaskHistoryController {
         view.addObject("message", "Found " + tasks.size() + " tasks!");
         return view;
     }
-//    @GetMapping("/create")
-//    public ModelAndView showCreate() {
-//        ModelAndView view = new ModelAndView("task/create");
-//        view.addObject("task", new TaskSaveRequest());
-//        view.addObject("taskTypes", TaskType.values());
-//        view.addObject("taskStatuses", TaskStatus.values());
-//        return view;
-//    }
 
     @PostMapping("/create")
     public ModelAndView showCreate(@ModelAttribute TaskSaveRequest task) {
@@ -76,11 +68,7 @@ public class TaskHistoryController {
         return "redirect:/history?message=Change Success";
     }
 
-//    @GetMapping("delete")
-//    public String delete(@RequestParam("id") Long id){
-//        taskHistoryService.deleteByID(id);
-//        return "redirect:/history?message=Deleted";
-//    }
+
     @GetMapping("/delete")
     public ModelAndView delete(@RequestParam("id") Long id){
     taskHistoryService.findById(id);
@@ -114,27 +102,6 @@ public class TaskHistoryController {
         return new ModelAndView("redirect:/history");
     }
 
-//    @GetMapping("/task-history/day")
-//    public String viewTaskHistoryByDay(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date, Model model) {
-//        List<TaskHistory> taskHistories = taskHistoryService.getTaskHistoriesByDay(date);
-//        model.addAttribute("taskHistories", taskHistories);
-//        return "task-history";
-//    }
-//
-//    @GetMapping("/task-history/week")
-//    public String viewTaskHistoryByWeek(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date, Model model) {
-//        List<TaskHistory> taskHistories = taskHistoryService.getTaskHistoriesByWeek(date);
-//        model.addAttribute("taskHistories", taskHistories);
-//        return "task-history";
-//    }
-//
-//    @GetMapping("/task-history/month")
-//    public String viewTaskHistoryByMonth(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date, Model model) {
-//        List<TaskHistory> taskHistories = taskHistoryService.getTaskHistoriesByMonth(date);
-//        model.addAttribute("taskHistories", taskHistories);
-//        return "task-history";
-//    }
-
     @GetMapping("/date")
     public ModelAndView showListDate(@RequestParam(name = "localDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate localDate) {
         ModelAndView view = new ModelAndView("/history/list");
@@ -146,7 +113,7 @@ public class TaskHistoryController {
             @RequestParam(value = "inputDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inputDate,
             @RequestParam(value = "inputWeek", required = false) String inputWeek,
             @RequestParam(value = "inputMonth", required = false) @DateTimeFormat(pattern = "yyyy-MM") YearMonth inputMonth) {
-        ModelAndView view = new ModelAndView("/history/thongke");
+        ModelAndView view = new ModelAndView("/task/thongke");
         if (inputDate == null && inputWeek == null && inputMonth == null) {
             LocalDate currentDate = LocalDate.now();
             inputDate = currentDate;
@@ -177,12 +144,11 @@ public class TaskHistoryController {
         view.addObject("inputMonth", inputMonth);
         return view;
     }
-
     @GetMapping("/thongke-day")
     public ModelAndView showStatusTotals(@RequestParam("inputDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inputDate,
                                          @RequestParam(value = "inputWeek", required = false) String inputWeek,
                                          @RequestParam(value = "inputMonth", required = false) @DateTimeFormat(pattern = "yyyy-MM") YearMonth inputMonth) {
-        ModelAndView view = new ModelAndView("/history/thongke");
+        ModelAndView view = new ModelAndView("/task/thongke");
         if (inputWeek == null && inputMonth == null) {
             LocalDate currentDate = LocalDate.now();
 //            inputDate = currentDate;
@@ -213,12 +179,13 @@ public class TaskHistoryController {
         view.addObject("inputMonth", inputMonth);
         return view;
     }
+
     @GetMapping("/thongke-week")
     public ModelAndView showStatusTotalsByWeek(
             @RequestParam(value = "inputWeek", required = false) String inputWeek,
             @RequestParam(value = "inputDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inputDate,
             @RequestParam(value = "inputMonth", required = false) @DateTimeFormat(pattern = "yyyy-MM") YearMonth inputMonth) {
-        ModelAndView view = new ModelAndView("/history/thongke");
+        ModelAndView view = new ModelAndView("/task/thongke");
         if (inputDate == null &&  inputMonth == null) {
             LocalDate currentDate = LocalDate.now();
             inputDate = currentDate;
@@ -252,14 +219,13 @@ public class TaskHistoryController {
         view.addObject("inputMonth", inputMonth);
         return view;
     }
-
     @GetMapping("/thongke-month")
     public ModelAndView showStatusTotalsByMonth(
             @RequestParam("inputMonth") @DateTimeFormat(pattern = "yyyy-MM") YearMonth inputMonth,
             @RequestParam(value = "inputWeek", required = false) String inputWeek,
             @RequestParam(value = "inputDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inputDate
     ) {
-        ModelAndView view = new ModelAndView("history/thongke");
+        ModelAndView view = new ModelAndView("task/thongke");
         if (inputDate == null && inputWeek == null ) {
             LocalDate currentDate = LocalDate.now();
             inputDate = currentDate;
@@ -289,6 +255,7 @@ public class TaskHistoryController {
         view.addObject("inputWeek", inputWeek);
         return view;
     }
+
 
 
 }

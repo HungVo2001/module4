@@ -17,9 +17,14 @@
             <h3 class="mt-3 border-bottom pb-2">Biểu đồ</h3>
         </div>
     </div>
+    <p>
+        <a class="btn btn-primary btn-sm" th:href="@{/task}">
+            Back to task list
+        </a>
+    </p>
     <div class="row">
         <div class="col-md-4">
-            <form th:action="@{/view/thongke-day}" method="get" class="search-form">
+            <form th:action="@{/history/thongke-day}" method="get" class="search-form">
                 <label for="inputDate">Choose a date:</label>
                 <input type="date" id="inputDate" name="inputDate" required th:value="${inputDate}" />
                 <button type="submit" class="btn btn-primary mt-2" style="width: 100%;">Thống kê theo ngày</button>
@@ -38,7 +43,7 @@
             </div>
         </div>
         <div class="col-md-4">
-            <form th:action="@{/view/thongke-week}" method="get" class="search-form">
+            <form th:action="@{/history/thongke-week}" method="get" class="search-form">
                 <label for="inputWeek">Choose a week:</label>
                 <input type="week" id="inputWeek" name="inputWeek" required th:value="${inputWeek}" />
                 <button type="submit" class="btn btn-primary mt-2" style="width: 100%;">Thống kê theo tuần</button>
@@ -57,7 +62,7 @@
             </div>
         </div>
         <div class="col-md-4">
-            <form th:action="@{/view/thongke-month}" method="get" class="search-form">
+            <form th:action="@{/history/thongke-month}" method="get" class="search-form">
                 <label for="inputMonth">Choose a month:</label>
                 <input type="month" id="inputMonth" name="inputMonth" required th:value="${inputMonth}" />
                 <button type="submit" class="btn btn-primary mt-2" style="width: 100%;">Thống kê theo tháng</button>
@@ -77,6 +82,7 @@
         </div>
     </div>
 </div>
+<th:block th:insert="~{layout.html :: myScript}"></th:block>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script th:inline="javascript">
     var pieChartDay = document.getElementById('pieChartDay').getContext('2d');
