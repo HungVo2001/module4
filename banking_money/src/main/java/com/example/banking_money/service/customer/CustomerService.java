@@ -1,7 +1,10 @@
 package com.example.banking_money.service.customer;
 
 import com.example.banking_money.domain.Customer;
+import com.example.banking_money.exception.BankingNotFoundException;
 import com.example.banking_money.repository.CustomerRepository;
+import com.example.banking_money.repository.DepositRepository;
+import com.example.banking_money.repository.WithdrawRepository;
 import com.example.banking_money.service.customer.request.CustomerSaveRequest;
 import com.example.banking_money.util.AppUtil;
 import lombok.AllArgsConstructor;
@@ -9,13 +12,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
+    private final DepositRepository depositRepository;
+    private final WithdrawRepository withdrawRepository;
 
     public List<Customer> findAll() {
         return customerRepository.findAll();
@@ -46,6 +53,20 @@ public class CustomerService {
     }
 
     public void delete(Long id) {
-        customerRepository.deleteById(id);
+//        customerRepository.deleteById(id);
+
+        Optional<Customer> customerOptional = customerRepository.findById(id);
+        if (customerOptional.isPresent()) {
+
+            Customer customer = customerOptional.get();
+            depositRepository.deleteAll(customer.getDeposits());
+            withdrawRepository.deleteAll(customer.getWithdraws());
+
+            customerRepository.deleteById(id);
+
+        } else {
+            throw new BankingNotFoundException("Khach hàng không tồn tại với ID: " + id);
+        }
     }
+
 }

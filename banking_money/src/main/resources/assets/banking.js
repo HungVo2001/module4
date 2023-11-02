@@ -1,3 +1,45 @@
+
+let bankingSelected = {};
+const url = 'http://localhost:8080/api/customer';
+let page = 0;
+let size = 10;
+let totalPage = 0;
+
+const validateName = (event) => {
+    const input = event.target;
+    const errorContainer = input.nextElementSibling; // lấy phần tử kế tiếp (container lỗi)
+    const value = input.value;
+    // thực hiện kiểm tra giá trị ở đây
+    if (value.trim() === '') {
+        errorContainer.textContent = 'This field is required!';
+    }
+}
+const validatePhone = (event) => {
+    const input = event.target;
+    const errorContainer = input.nextElementSibling;
+    const value = input.value;
+
+    if (value.trim() === '') {
+        errorContainer.textContent = 'This field is required!';
+    }
+}
+
+const validateEmail = (event) => {
+    const input = event.target;
+    const errorContainer = input.nextElementSibling;
+    const value = input.value;
+
+    if (value.trim() === '') {
+        errorContainer.textContent = 'This field is required!';
+    }
+}
+
+const clearError = (event) => {
+    const input = event.target;
+    const errorContainer = input.nextElementSibling;
+    errorContainer.textContent = ''; // xóa thông báo lỗi khi thay đổi giá trị
+}
+
 const renderCustomer = (obj) => {
     return `
                 <tr id="tr_${obj.id}">
@@ -36,13 +78,7 @@ const renderCustomer = (obj) => {
             `;
 }
 
-
 const strBody = $('#tbCustomerBody');
-const url = 'http://localhost:8080/api/customer';
-let page = 0;
-let size = 10;
-let totalPage = 0;
-
 const getAllCustomers = () => {
 
     $.ajax({
@@ -95,39 +131,10 @@ const getAllCustomers = () => {
             alert('Error');
         }
     });
+
 }
 
 getAllCustomers();
-
-const btnTest = $('#btnTest');
-btnTest.on('click', () => {
-    const obj = {
-        fullName: "Bảo Thi 2",
-        email: "baothi2@co.cc",
-        phone: "+1 (182) 724-6958",
-        address: "At eum in eligendi u",
-        balance: 0,
-        deleted: 0
-    }
-
-    $.ajax({
-        headers: {
-            'accept': 'application/json',
-            'content-type': 'application/json'
-        },
-        type: 'POST',
-        url: 'http://localhost:8080/api/customer',
-        data: JSON.stringify(obj),
-    })
-        .done((data) => {
-            console.log("Success");
-            console.log(data);
-            getAllCustomers();
-        })
-        .fail((error) => {
-            console.log(error);
-        })
-})
 
 const btnCreate = $('#btnCreate');
 btnCreate.on('click', () => {
@@ -139,6 +146,32 @@ btnCreate.on('click', () => {
         delay: 1000,
         line: true,
     });
+
+    const inputFields = getDataInput();
+    let hasError = false;
+    // kiểm tra và hiển thị thông báo lỗi cho mỗi trường
+    inputFields.forEach((field) => {
+        const inputElement = $(`#${field.name}Cre`);
+        const value = inputElement.val();
+        const errorContainer = $(`#${field.name}ErrorContainer`); // thêm container cho thông báo lỗi
+
+        if (field.required && !value) {
+            hasError = true;
+            errorContainer.text(`Please enter a valid ${field.label}`); // hiển thị thông báo lỗi
+        } else if (field.pattern && !new RegExp(field.pattern).test(value)) {
+            hasError = true;
+            errorContainer.text(field.message); // hiển thị thông báo lỗi
+        } else {
+            errorContainer.text(''); // xóa thông báo lỗi nếu hợp lệ
+        }
+    });
+
+    if (hasError) {
+        // nếu có lỗi, không thực hiện yêu cầu AJAX và kết thúc
+        btnCreate.attr('disabled', false);
+        load.remove();
+        return;
+    }
 
     const obj = {
         fullName: $('#fullNameCre').val(),
@@ -176,6 +209,7 @@ btnCreate.on('click', () => {
                     align: 'topright'
                 });
                 $('#formCre').trigger("reset");
+
             })
             .fail((error) => {
                 console.log(error);
@@ -187,11 +221,11 @@ btnCreate.on('click', () => {
     }, 5000);
 })
 
-
 const btnUpdate = $('#btnUpdate');
 btnUpdate.on('click', () => {
     btnUpdate.attr('disabled', true);
     const customerId = $('#idUp').val();
+
 
     let load = webToast.loading({
         status: 'Loading...',
@@ -200,6 +234,31 @@ btnUpdate.on('click', () => {
         delay: 1000,
         line: true,
     });
+
+    const inputFields = getDataInput();
+    let hasError = false;
+    inputFields.forEach((field) => {
+        const inputElement = $(`#${field.name}Up`);
+        const value = inputElement.val();
+        const error = $(`#${field.name}Error`); // thêm container cho thông báo lỗi
+
+        if (field.required && !value) {
+            hasError = true;
+            error.text(`Please enter a valid ${field.label}`); // hiển thị thông báo lỗi
+        } else if (field.pattern && !new RegExp(field.pattern).test(value)) {
+            hasError = true;
+            error.text(field.message); // hiển thị thông báo lỗi
+        } else {
+            error.text(''); // xóa thông báo lỗi nếu hợp lệ
+        }
+    });
+
+    if (hasError) {
+        // nếu có lỗi, không thực hiện yêu cầu AJAX và kết thúc
+        btnUpdate.attr('disabled', false);
+        load.remove();
+        return;
+    }
 
     const obj = {
         fullName: $('#fullNameUp').val(),
@@ -226,12 +285,14 @@ btnUpdate.on('click', () => {
                 $('#modalUpdate').hide();
                 $('#closeUp').click();
 
+
                 webToast.Success({
                     status: 'Cập nhật thành công',
                     message: '',
                     delay: 2000,
                     align: 'topright'
                 });
+
 
             })
             .fail((error) => {
@@ -243,7 +304,6 @@ btnUpdate.on('click', () => {
             })
     }, 5000);
 })
-
 
 function deleteById(customerId) {
     const balance =+$("#balance-" + customerId).text();
@@ -287,7 +347,6 @@ function showPlus(id) {
         }
     })
 }
-
 function plus(id) {
     const amount = +$("#deposit").val();
     const balance =+$("#balance-" + id).text();
@@ -328,7 +387,6 @@ function plus(id) {
         $("#deposit").val("");
     }
 }
-
 function showMinus(id) {
 
     $.ajax({
@@ -343,9 +401,6 @@ function showMinus(id) {
         }
     })
 }
-
-
-
 function minus(id) {
 
     const amount = +$("#withdraw").val();
@@ -396,7 +451,6 @@ function minus(id) {
         $("#withdraw").val("");
     }
 }
-
 function showFormTransfer(id) {
     document.getElementById("balance").value = document.getElementById("balance-" + id).innerText;
     document.getElementById("fullNameSender").value = document.getElementById("tr_" + id).querySelectorAll("td")[1].innerText;
@@ -424,7 +478,6 @@ function showFormTransfer(id) {
         }
     });
 }
-
 function transferAmount(idSender, idRecipient) {
 
     const amount = +$("#transfer").val();
@@ -485,7 +538,6 @@ function transferAmount(idSender, idRecipient) {
         $('#formTransfer').trigger("reset");
     }
 }
-
 const renderPagination = () => {
     const pagination = $('#pagination');
     pagination.empty();
@@ -508,11 +560,43 @@ const renderPagination = () => {
       <a class="page-link" href="#" tabindex="-1" ${page === totalPage - 1 ? 'aria-disabled="true"' : ''} ><span aria-hidden="true">&raquo;</span></a>
     </li>`);
 }
-
 const onPageChange = (pageChange) => {
     if(pageChange < 1 || pageChange > totalPage || pageChange === page+1){
         return;
     }
     page = pageChange - 1;
     getAllCustomers();
+}
+
+function getDataInput() {
+    return [
+        {
+            label: 'Full Name',
+            classContainer: "col-6 mt-3",
+            name: 'fullName',
+            value: bankingSelected.fullName,
+            required: true,
+            pattern: "^[A-Za-z]{4,15}",
+            message: "Full Name must have minimum is 4 characters and maximum is 15 characters",
+        },
+
+        {
+            label: 'Phone',
+            classContainer: "col-12 mt-3",
+            name: 'phone',
+            value: bankingSelected.phone,
+            pattern: /^\+\d\s\(\d{3}\)\s\d{3}-\d{4}$/,
+            message: "Phone is between +X (XXX) XXX-XXXX",
+            required: true
+        },
+        {
+            label: 'Email',
+            classContainer: "col-12 mt-3",
+            name: 'email',
+            value: bankingSelected.email,
+            pattern: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+            message: "Please enter a valid email address",
+            required: true
+        },
+    ];
 }
