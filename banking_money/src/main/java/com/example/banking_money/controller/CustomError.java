@@ -20,11 +20,11 @@ public class CustomError implements ErrorController {
         if (status != null) {
             int statusCode = Integer.parseInt(status.toString());
             if (statusCode == HttpStatus.INTERNAL_SERVER_ERROR.value()) {
-                model.addAttribute("errorTitle", "Error 500: Lỗi máy chủ");
+                model.addAttribute("errorTitle", "Error 500: Sever Error");
                 model.addAttribute("errorMessage", "Xin lỗi, đã xảy ra lỗi máy chủ. Vui lòng thử lại sau.");
                 model.addAttribute("isError500", true); // đặt biến cờ cho lỗi 500
             } else if (statusCode == HttpStatus.NOT_FOUND.value()) {
-                model.addAttribute("errorTitle", "Error 404: Trang không tìm thấy");
+                model.addAttribute("errorTitle", "Error 404: Page Not Found");
                 model.addAttribute("errorMessage", "Xin lỗi, trang bạn đang tìm kiếm không tìm thấy!");
                 model.addAttribute("isError404", true);
             }
@@ -32,8 +32,4 @@ public class CustomError implements ErrorController {
         return "error";
     }
 
-
-    public String getErrorPath() {
-        return "/error";
-    }
 }

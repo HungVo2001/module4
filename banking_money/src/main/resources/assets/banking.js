@@ -40,37 +40,37 @@ const clearError = (event) => {
     errorContainer.textContent = ''; // xóa thông báo lỗi khi thay đổi giá trị
 }
 
-const renderCustomer = (obj) => {
+const renderCustomer = (item) => {
     return `
-                <tr id="tr_${obj.id}">
-                    <td>${obj.id}</td>
-                    <td>${obj.fullName}</td>
-                    <td>${obj.email}</td>
-                    <td>${obj.phone}</td>
+                <tr id="tr_${item.id}">
+                    <td>${item.id}</td>
+                    <td>${item.fullName}</td>
+                    <td>${item.email}</td>
+                    <td>${item.phone}</td>
                  
-                    <td id="balance-${obj.id}">${obj.balance}</td>
+                    <td id="balance-${item.id}">${item.balance}</td>
                     <td>
-                        <button class="btn btn-outline-primary edit" data-id="${obj.id}" data-bs-toggle="modal" data-bs-target="#modalUpdate">
+                        <button class="btn btn-outline-primary edit" data-id="${item.id}" data-bs-toggle="modal" data-bs-target="#modalUpdate">
                             <i class="fas fa-user-edit"></i>
                         </button>
                     </td>
                     <td>
-                        <button class="btn btn-outline-success" onclick="showPlus(${obj.id})" data-bs-toggle="modal" data-bs-target="#modalPlus">
+                        <button class="btn btn-outline-success" onclick="showPlus(${item.id})" data-bs-toggle="modal" data-bs-target="#modalPlus">
                             <i class="fas fa-plus"></i>
                         </button>
                     </td>
                     <td>
-                        <button class="btn btn-outline-warning" onclick="showMinus(${obj.id})" data-bs-toggle="modal" data-bs-target="#modalMinus">
+                        <button class="btn btn-outline-warning" onclick="showMinus(${item.id})" data-bs-toggle="modal" data-bs-target="#modalMinus">
                             <i class="fas fa-minus"></i>
                         </button>
                     </td>
                     <td>
-                        <button class="btn btn-outline-secondary" onclick="showFormTransfer(${obj.id})" data-bs-toggle="modal" data-bs-target="#modalTransfer">
+                        <button class="btn btn-outline-secondary" onclick="showFormTransfer(${item.id})" data-bs-toggle="modal" data-bs-target="#modalTransfer">
                             <i class="fas fa-exchange-alt"></i>
                         </button>
                     </td>
                     <td>
-                        <button class="btn btn-outline-danger" onclick="deleteById(${obj.id})">
+                        <button class="btn btn-outline-danger" onclick="deleteById(${item.id})">
                             <i class="fas fa-user-slash"></i>
                         </button>
                     </td>
@@ -80,20 +80,25 @@ const renderCustomer = (obj) => {
 
 const strBody = $('#tbCustomerBody');
 const getAllCustomers = () => {
-
+    // dùng ajax để call api, dùng Jquery để action HTTP đến 1 url cụ thể
     $.ajax({
         type: 'get',
         url: `http://localhost:8080/api/customer?page=${page || 0}&size=${size || 0}`,
         success: function (res) {
-            strBody.empty();
+            strBody.empty(); // clear hết element có id là strBody, clear dữ liệu cũ trước khi hiển thị dữ liệu mới
             totalPage = res.totalPages;
+
+            // lặp qua mảng content trong obj res
             $.each(res.content, (index, item) => {
-                const str = renderCustomer(item);
-                $(strBody).prepend(str);
+                const str = renderCustomer(item); //gọi hàm tạo chuỗi HTML dựa trên dữ liệu khách hàng đc truyền vào
+
+                $(strBody).prepend(str); //thêm chuỗi HTML str vào đầu pt id strBody, hiển thị khách hàng
+
             })
 
             renderPagination();
 
+            // gán 1 sự kiện click cho tất cả các pt có class CSS là edit.
             $('.edit').on('click', function () {
                 const id = $(this).data('id');
 
